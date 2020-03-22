@@ -25,6 +25,8 @@ services:
       - traefik.enable=true
       - traefik.http.middlewares.backend-decguardbackend-stripprefix.stripprefix.prefixes=/api/v1
       - traefik.http.middlewares.backend-decguardbackend-headers.headers.accessControlAllowOrigin=*
+      - traefik.http.middlewares.backend-decguardbackend-headers.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.backend-decguardbackend-headers.headers.accessControlAllowMethods=*
       - traefik.http.routers.backend-decguardbackend.entrypoints=websecure
       - traefik.http.routers.backend-decguardbackend.middlewares=backend-decguardbackend-stripprefix,backend-decguardbackend-headers
       - traefik.http.routers.backend-decguardbackend.rule=Host(`cguard.de`, `www.cguard.de`) && PathPrefix(`/api/v1/`)
