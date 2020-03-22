@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  frontend:
+    build: ./frontend
+    image: wvv/frontend:latest
+    container_name: de-cguard_frontend
+    networks:
+      - docker
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend-decguardfrontend.entrypoints=websecure
+      - traefik.http.routers.frontend-decguardfrontend.rule=Host(`cguard.de`, `www.cguard.de`)
+      - traefik.http.routers.frontend-decguardfrontend.tls.certresolver=le
+      - traefik.http.services.frontend-decguardfrontend.loadbalancer.server.port=80
+    restart: always
+  backend:
+    build: ./backend
+    image: wvv/backend:latest
+    container_name: de-cguard_backend
+    networks:
+      - default
+      - docker
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.backend-decguardbackend-stripprefix.stripprefix.prefixes=/api/v1
+      - traefik.http.middlewares.backend-decguardbackend-headers.headers.accessControlAllowOrigin=*
+      - traefik.http.routers.backend-decguardbackend.entrypoints=websecure
+      - traefik.http.routers.backend-decguardbackend.middlewares=web-decguardbackend-stripprefix,web-decguardbackend-headers
+      - traefik.http.routers.backend-decguardbackend.rule=Host(`cguard.de`, `www.cguard.de`) && PathPrefix(`/api/v1/`)
+      - traefik.http.routers.backend-decguardbackend.tls.certresolver=le
+      - traefik.http.services.backend-decguardbackend.loadbalancer.server.port=3000
+    depends_on:
+      - db
+    restart: always
+  db:
+    image: mariadb:latest
+    container_name: de-cguard_backend_db
+    networks:
+      - default
+    environment:
+      - MYSQL_ROOT_PASSWORD=WriZxnxK2d756q29NA2WGrR3
+      - MYSQL_DATABASE=wvv
+    restart: always
+
+networks:
+  default:
+  docker:
+    external:
+      name: docker
