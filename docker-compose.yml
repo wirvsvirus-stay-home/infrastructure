@@ -28,7 +28,6 @@ services:
       - traefik.http.routers.backend-decguardbackend.entrypoints=websecure
       - traefik.http.routers.backend-decguardbackend.middlewares=web-decguardbackend-stripprefix,web-decguardbackend-headers
       - traefik.http.routers.backend-decguardbackend.rule=Host(`cguard.de`, `www.cguard.de`) && PathPrefix(`/api/v1/`)
-      - traefik.http.routers.backend-decguardbackend.tls.certresolver=le
       - traefik.http.services.backend-decguardbackend.loadbalancer.server.port=3000
     depends_on:
       - db
